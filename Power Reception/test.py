@@ -98,16 +98,6 @@ for dataDictionary in dataCollection:
     except:
         cdrxEnergy = 0
 
-    if packetEnergy < 1500 and dataDictionary["properties"][0] == 2:
-        print(dataDictionary["properties"])
-        fig, ax1 = plt.subplots()
-        plt.plot("time", "power", data=dataDictionary["data"])
-
-        ax2 = ax1.twinx()
-        plt.plot("time", "CH3", data=dataDictionary["data"], color="tab:red")
-        plt.show()
-        #dataDictionary["data"].plot(x="time", y="power")
-
     if bootEnergy != 0 and connectEnergy != 0 and networkEnergy != 0 and packetEnergy != 0 and cdrxEnergy != 0:
         energyDataFrame = energyDataFrame.append({
             'boot': bootEnergy,
@@ -127,65 +117,9 @@ for dataDictionary in dataCollection:
 
 energyDataFrame = energyDataFrame.sort_values(by=['rsrp'])
 
-
-
-# sns.scatterplot(x="rsrp", y="boot", hue="celevel", data=energyDataFrame)
-# plt.show()
-# sns.scatterplot(x="rsrp", y="connect", hue="celevel", data=energyDataFrame)
-# plt.show()
-# sns.scatterplot(x="rsrp", y="network", hue="celevel", data=energyDataFrame)
-# plt.show()
-# sns.scatterplot(x="rsrp", y="packet", hue="celevel", data=energyDataFrame)
-# plt.show()
-# sns.scatterplot(x="rsrp", y="cdrx", hue="celevel", data=energyDataFrame)
-# plt.show()
-# sns.scatterplot(x="rsrp", y="packetCdrx", hue="celevel", data=energyDataFrame)
-# plt.show()
-#
-
-sns_plot = sns.scatterplot(x="rsrp", y="total", hue="celevel", data=energyDataFrame)
-lm.save("total.tex", fig=sns_plot.get_figure(), show=False)
-
-
-
-sns.scatterplot(x="rsrp", y="total", hue="celevel", data=energyDataFrame)
-plt.show()
-
-# -- Boxplots --
-boxplotData = [energyDataFrame.loc[energyDataFrame['celevel'] == "A"]["connect"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "B"]["connect"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "C"]["connect"]]
-fig7, ax7 = plt.subplots()
-ax7.set_title('Connect celevel')
-ax7.boxplot(boxplotData)
-
-boxplotData = [energyDataFrame.loc[energyDataFrame['celevel'] == "A"]["network"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "B"]["network"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "C"]["network"]]
-fig7, ax7 = plt.subplots()
-ax7.set_title('Network celevel')
-ax7.boxplot(boxplotData)
-
-boxplotData = [energyDataFrame.loc[energyDataFrame['celevel'] == "A"]["packet"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "B"]["packet"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "C"]["packet"]]
-fig7, ax7 = plt.subplots()
-ax7.set_title('Packet celevel')
-ax7.boxplot(boxplotData)
-
-boxplotData = [energyDataFrame.loc[energyDataFrame['celevel'] == "A"]["packetCdrx"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "B"]["packetCdrx"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "C"]["packetCdrx"]]
-fig7, ax7 = plt.subplots()
-ax7.set_title('Packetcdrx celevel')
-ax7.boxplot(boxplotData)
-
-boxplotData = [energyDataFrame.loc[energyDataFrame['celevel'] == "A"]["total"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "B"]["total"],
-               energyDataFrame.loc[energyDataFrame['celevel'] == "C"]["total"]]
-fig7, ax7 = plt.subplots()
-ax7.set_title('Total celevel')
-ax7.boxplot(boxplotData)
-
-plt.show()
-#LatexifyMatplotlib.save(filename+".tex", plt = plt, show = True)
+fig, ax = plt.subplots()
+colors = {'A':'red', 'B':'blue', 'C':'green'}
+for name, group in energyDataFrame.groupby(by="celevel"):
+    #ax.scatter(energyDataFrame["rsrp"], energyDataFrame["total"], c=energyDataFrame['celevel'].apply(lambda x: colors[x]))
+    plt.scatter(group["rsrp"], group["total"], c=colors[name])
+lm.save("total.tex", fig=fig, plt=plt, show=True)

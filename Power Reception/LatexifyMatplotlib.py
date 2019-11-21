@@ -25,6 +25,7 @@ import tikzplotlib
 
 SPINE_COLOR = 'gray'
 
+
 def latexify(fig_width=None, fig_height=None, columns=1):
     """Set up matplotlib's RC params for LaTeX plotting.
     Call this before plotting a figure.
@@ -103,8 +104,8 @@ def legend(plt):
     plt.legend(framealpha=0.0)
 
 
-def save(filename, scale_legend=None, show=False, plt=None):
-    #assert show == (plt is not None), "Add plt argument in order to show the figure"
+def save(filename, scale_legend=None, show=False, fig=None, plt=None):
+    # assert show == (plt is not None), "Add plt argument in order to show the figure"
 
     ext = filename.rsplit('.', 1)[-1]
 
@@ -114,6 +115,9 @@ def save(filename, scale_legend=None, show=False, plt=None):
 
     output_path = os.path.abspath(os.path.join(
         current_dir, 'Result'))
+
+    if not os.path.isdir(output_path):
+        os.mkdir(output_path)
 
     out = os.path.join(output_path, filename)
 
@@ -125,16 +129,18 @@ def save(filename, scale_legend=None, show=False, plt=None):
     ]
 
     if scale_legend:
-        extra_axis_param.extend([r"legend style={nodes={scale="+scale_legend+", transform shape}}"])
+        extra_axis_param.extend([r"legend style={nodes={scale=" + scale_legend + ", transform shape}}"])
 
-    fig = plt.gcf()
+    if fig is None:
+        fig = plt.gcf()
 
     if show:
         plt.show()
 
-    print(r"Replace 'table' with 'table[row sep=\\]' in the tex file. I have opened an issue in matplotlib2tikz; let's hope that this is resolved in a future release")
-    print("If you have still problems, you will probably need to add some newlines manually in the file (because the inline is too long)")
+    print(
+        r"Replace 'table' with 'table[row sep=\\]' in the tex file. I have opened an issue in matplotlib2tikz; let's hope that this is resolved in a future release")
+    print(
+        "If you have still problems, you will probably need to add some newlines manually in the file (because the inline is too long)")
 
-    tikzplotlib.save(out, figure=fig, textsize=8, extra_axis_parameters=extra_axis_param, float_format="{:.5f}", table_row_sep=r"\\")
-
-
+    tikzplotlib.save(out, figure=fig, textsize=8, extra_axis_parameters=extra_axis_param, float_format="{:.5f}",
+                     table_row_sep=r"\\")
