@@ -121,5 +121,5 @@ fig, ax = plt.subplots()
 colors = {'A':'red', 'B':'blue', 'C':'green'}
 for name, group in energyDataFrame.groupby(by="celevel"):
     #ax.scatter(energyDataFrame["rsrp"], energyDataFrame["total"], c=energyDataFrame['celevel'].apply(lambda x: colors[x]))
-    plt.scatter(group["rsrp"], group["total"], c=colors[name])
+    plt.scatter(group["rsrp"], group["total"]/1000, c=colors[name])
 lm.save("total.tex", fig=fig, plt=plt, show=True)
