@@ -5,6 +5,7 @@ from numpy import trapz
 import numpy as np
 import seaborn as sns
 import glob
+import logging
 import LatexifyMatplotlib
 
 SPINE_COLOR = 'gray'
@@ -37,10 +38,11 @@ times = [
 #     [0, -105, -107, 135, 0]
 # ]
 
-filenames = glob.glob("Metingen 6/*.csv")
-
+filenames = glob.glob("Metingen 7/*.csv")
+#filenames.extend(glob.glob("Metingen 7/*.csv"))
 dataCollection = []
 
+print(filenames)
 i = 0
 for filename in filenames:
     tempDictionary = {}
@@ -65,8 +67,10 @@ for filename in filenames:
     df['current'] = (abs(df['CH1'] - df['CH2']))*1000#*3.98
     df['power'] = df['current']*df['CH1']
 
+    df["CH3"] = df["CH3"]*1000
 
-
+    #plt.plot("time", "CH3", data=df)
+    #plt.plot("time", "current", data=df)
 
     # with plt.style.context('seaborn-muted'): #dark_background
     #     plt.rcParams.update({'font.family': 'CMU Serif', 'font.size': 12, 'figure.figsize': '10,4'})
@@ -80,18 +84,28 @@ for filename in filenames:
     #     #plt.savefig(filename+".svg", bbox_inches='tight')
 
     #LatexifyMatplotlib.latexify()
-    plt.show()
+    # plt.show()
 
     df.drop(columns=['CH1', 'CH2', 'Unnamed: 5', 'trigger'], inplace=True)
     try:
         tempDictionary["data"] = df
         tempDictionary["times"] = [[triggerDataFrame.index[0], triggerDataFrame.index[1]]]
+    except:
+        print("Not valid 1: ")
+        print(filename)
 
-        propertiesString = filename.replace("Metingen 6\\Payload ", "")
+    try:
+        propertiesString = filename.replace("Metingen 4-6\\Payload ", "")
+        propertiesString = propertiesString.replace("Metingen 7\\Payload ", "")
         tempDictionary["properties"] = np.array(propertiesString.split(" ")).astype(np.int16).tolist()
+    except:
+        print("Not valid 2: ")
+        print(filename)
+
+    try:
         dataCollection.append(tempDictionary)
     except:
-        print("Not valid: ")
+        print("Not valid 3: ")
         print(filename)
 
     i = i+1
@@ -115,6 +129,7 @@ for dataDictionary in dataCollection:
     if packetEnergy != 0:
         energyDataFrame = energyDataFrame.append({
             'packet': packetEnergy,
+            'perbyte': packetEnergy / dataDictionary["properties"][1],
             'celevel': 'A' if dataDictionary["properties"][0] == 0 else 'B' if dataDictionary["properties"][0] == 1 else 'C',
             'payload': dataDictionary["properties"][1],
         }, ignore_index=True)
@@ -122,10 +137,15 @@ for dataDictionary in dataCollection:
 
 energyDataFrame = energyDataFrame.sort_values(by=['payload'])
 
-# sns.scatterplot(x="rsrp", y="boot", hue="celevel", data=energyDataFrame)
-# plt.show()
-sns.scatterplot(x="payload", y="packet", hue="celevel", data=energyDataFrame)
-plt.show()
+#sns.scatterplot(x="rsrp", y="boot", hue="celevel", data=energyDataFrame)
+#plt.show()
+#plt.figure()
+sns_plot = sns.scatterplot(x="payload", y="packet", hue="celevel", data=energyDataFrame)
+LatexifyMatplotlib.save("payload.tex", fig=sns_plot.get_figure(), show=False)
+#plt.show()
 
+#plt.figure()
+sns_plot = sns.scatterplot(x="payload", y="perbyte", hue="celevel", data=energyDataFrame)
+LatexifyMatplotlib.save("perbyte.tex", fig=sns_plot.get_figure(), show=False)
+#plt.show()
 
-#LatexifyMatplotlib.save(filename+".tex", plt = plt, show = True)
