@@ -143,4 +143,5 @@ def save(filename, scale_legend=None, show=False, fig=None, plt=None):
         "If you have still problems, you will probably need to add some newlines manually in the file (because the inline is too long)")
 
 
-    tikzplotlib.save(out, figure=fig, textsize=8, extra_axis_parameters=extra_axis_param)
+    tikzplotlib.save(out, figure=fig, textsize=8, extra_axis_parameters=extra_axis_param, float_format="{:.5f}",
+                     table_row_sep=r"\\")

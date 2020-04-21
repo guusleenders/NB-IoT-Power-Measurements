@@ -139,9 +139,10 @@ energyDataFrame = energyDataFrame.sort_values(by=['payload'])
 
 #sns.scatterplot(x="rsrp", y="boot", hue="celevel", data=energyDataFrame)
 #plt.show()
-#plt.figure()
+figu = plt.figure()
 sns_plot = sns.scatterplot(x="payload", y="packet", hue="celevel", data=energyDataFrame)
-#LatexifyMatplotlib.save("payload.tex", fig=sns_plot.get_figure(), show=False)
+figure = sns_plot.get_figure()
+LatexifyMatplotlib.save("payload.tex", fig=figure, show=False)
 plt.show()
 
 #plt.figure()
