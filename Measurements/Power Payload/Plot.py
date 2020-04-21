@@ -64,7 +64,7 @@ for filename in filenames:
 
     df["time"] = df.index*inc
     df = df.drop(columns=["Start", "Increment"])
-    df['current'] = (abs(df['CH1'] - df['CH2']))*1000#*3.98
+    df['current'] = (abs(df['CH1'] - df['CH2']))#*3.98
     df['power'] = df['current']*df['CH1']
 
     df["CH3"] = df["CH3"]*1000
@@ -116,7 +116,7 @@ for dataDictionary in dataCollection:
     packetEnergy = trapz(dataDictionary["data"]["power"][dataDictionary["times"][0][0]:dataDictionary["times"][0][1]],
                        x=dataDictionary["data"]["time"][dataDictionary["times"][0][0]:dataDictionary["times"][0][1]])
 
-    if packetEnergy < 1500 and dataDictionary["properties"][0] == 2:
+    if packetEnergy < 0.1500 and dataDictionary["properties"][0] == 2:
         print(dataDictionary["properties"])
         fig, ax1 = plt.subplots()
         plt.plot("time", "power", data=dataDictionary["data"])
@@ -141,11 +141,11 @@ energyDataFrame = energyDataFrame.sort_values(by=['payload'])
 #plt.show()
 #plt.figure()
 sns_plot = sns.scatterplot(x="payload", y="packet", hue="celevel", data=energyDataFrame)
-LatexifyMatplotlib.save("payload.tex", fig=sns_plot.get_figure(), show=False)
-#plt.show()
+#LatexifyMatplotlib.save("payload.tex", fig=sns_plot.get_figure(), show=False)
+plt.show()
 
 #plt.figure()
 sns_plot = sns.scatterplot(x="payload", y="perbyte", hue="celevel", data=energyDataFrame)
-LatexifyMatplotlib.save("perbyte.tex", fig=sns_plot.get_figure(), show=False)
-#plt.show()
+#LatexifyMatplotlib.save("perbyte.tex", fig=sns_plot.get_figure(), show=False)
+plt.show()
 
